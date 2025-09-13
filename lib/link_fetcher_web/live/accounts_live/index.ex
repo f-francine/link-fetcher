@@ -2,7 +2,6 @@ defmodule LinkFetcherWeb.AccountsLive.Index do
   use LinkFetcherWeb, :live_view
 
   alias LinkFetcherWeb.AccountsLive.FormComponent
-  alias LinkFetcher.Accounts.User
 
   @impl true
   def mount(_params, _session, socket) do
@@ -15,12 +14,11 @@ defmodule LinkFetcherWeb.AccountsLive.Index do
   end
 
   @impl true
-  @spec handle_info(any(), any()) :: none()
   def handle_info({FormComponent, {event, user}}, socket) when event in [:signed_up, :signed_in] do
     {:noreply,
       socket
-      |> assign(:current_user, user)}
-      |> push_navigate(to: "/links")
+      |> assign(:current_user, user.id)
+      |> push_navigate(to: ~p"/links")}
   end
 
   @impl true

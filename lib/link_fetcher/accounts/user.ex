@@ -11,6 +11,8 @@ defmodule LinkFetcher.Accounts.User do
     field :password, :string
     field :hashed_password, :string
 
+    has_many :pages, LinkFetcher.Links.Page
+
     timestamps(type: :utc_datetime)
   end
 

@@ -62,6 +62,7 @@ defmodule LinkFetcherWeb do
   def live_component do
     quote do
       use Phoenix.LiveComponent
+      import Phoenix.Component
 
       unquote(html_helpers())
     end

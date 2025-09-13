@@ -64,7 +64,6 @@ defmodule LinkFetcherWeb.AccountsLive.FormComponent do
          |> push_patch(to: socket.assigns.patch)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        IO.inspect("SignUp failed: #{inspect(changeset)}")
         {:noreply, assign(socket, form: to_form(changeset))}
     end
   end
@@ -79,7 +78,6 @@ defmodule LinkFetcherWeb.AccountsLive.FormComponent do
          |> push_patch(to: socket.assigns.patch)}
 
       {:error, reason} ->
-        IO.inspect("Login failed: #{inspect(reason)}")
         changeset = Accounts.change_user(%LinkFetcher.Accounts.User{})
         {:noreply, assign(socket, form: to_form(changeset), error_message: "Invalid email or password")}
     end
