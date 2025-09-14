@@ -3,11 +3,12 @@ defmodule LinkFetcherWeb.HomeLive do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket,
-      show_form: false,
-      form_type: nil,
-      changeset: %{}
-    ), layout: false}
+    {:ok,
+     assign(socket,
+       show_form: false,
+       form_type: nil,
+       changeset: %{}
+     ), layout: false}
   end
 
   @impl true
@@ -25,6 +26,7 @@ defmodule LinkFetcherWeb.HomeLive do
     if socket.assigns.form_type == "signup" do
       send(self(), {:signup, user_params})
     end
+
     {:noreply, socket}
   end
 end

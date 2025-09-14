@@ -54,9 +54,11 @@ config :phoenix, :json_library, Jason
 
 # Configures Crawly
 config :crawly,
-  closespider_timeout: 10, # Stop after 10 seconds
+  # Stop after 10 seconds
+  closespider_timeout: 10,
   concurrent_requests_per_domain: 10,
-  closespider_itemcount: 100 # Stop after collecting 100 items
+  # Stop after collecting 100 items
+  closespider_itemcount: 100
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
