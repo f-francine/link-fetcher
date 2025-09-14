@@ -1,4 +1,4 @@
-defmodule LinkFetcher.Links.Page do
+defmodule LinkFetcher.Pages.Page do
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -7,8 +7,8 @@ defmodule LinkFetcher.Links.Page do
   schema "pages" do
     field :title, :string
     field :url, :string
-    belongs_to :user, LinkFetcher.Accounts.User
-    has_many :links, LinkFetcher.Links.Link
+    belongs_to :user, LinkFetcher.Accounts.User, type: :binary_id
+    has_many :links, LinkFetcher.Pages.Link
 
     timestamps()
   end

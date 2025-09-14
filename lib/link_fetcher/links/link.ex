@@ -1,13 +1,13 @@
-defmodule LinkFetcher.Links.Link do
+defmodule LinkFetcher.Pages.Link do
   use Ecto.Schema
   import Ecto.Changeset
 
-  @fields ~w(url title)a
+  @fields ~w(url title page_id)a
 
   schema "links" do
     field :url, :string
     field :title, :string
-    belongs_to :pages, LinkFetcher.Links.Page
+    belongs_to :page, LinkFetcher.Pages.Page
 
     timestamps()
   end
