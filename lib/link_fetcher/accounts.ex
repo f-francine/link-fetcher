@@ -35,7 +35,7 @@ defmodule LinkFetcher.Accounts do
       ** (Ecto.NoResultsError)
 
   """
-  def get_user!(id), do: Repo.get!(User, id)
+  def get_user(id), do: Repo.get(User, id)
 
   @doc """
   Creates a user.
@@ -102,11 +102,14 @@ defmodule LinkFetcher.Accounts do
     User.changeset(user, attrs)
   end
 
-  def authenticate_user(email, password) do
-    user = Repo.get_by(User, email: email)
+  def authenticate_user(%User{} = user) do
+    user = Repo.get_by(User, email: user.email)
+
+    IO.inspect("user:")
+    IO.inspect(user)
 
     cond do
-      user && Bcrypt.verify_pass(password, user.hashed_password) ->
+      user && Bcrypt.verify_pass(user.password, user.hashed_password) ->
         {:ok, user}
 
       user ->
@@ -114,6 +117,13 @@ defmodule LinkFetcher.Accounts do
 
       true ->
         {:error, :user_not_found}
+    end
+  end
+
+  def register_user(%User{} = user) do
+    case Repo.insert(user) do
+      {:ok, user} -> {:ok, user}
+      {:error, changeset} -> {:error, changeset}
     end
   end
 end
