@@ -10,8 +10,6 @@ defmodule LinkFetcherWeb.PagesLive.Index do
 
   @impl true
   def mount(_params, session, socket) do
-
-    IO.inspect(session["current_user_id"], label: "session in pages live")
     user = LinkFetcher.Accounts.get_user(session["current_user_id"])
 
     page_number = 1

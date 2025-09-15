@@ -41,35 +41,42 @@ defmodule LinkFetcher.AccountsTest do
       invalid_attrs = %{email: "invalid_email", password: "1"}
 
       assert {
-              :error,
-              %{
-                errors: %{
-                  email: [
-                    "has invalid format"
-                  ],
-                  password: [
-                    "should be at least 6 character(s)"
-                  ]
-                }
-              }
-            } == User.cast_and_apply(%User{}, invalid_attrs)
+               :error,
+               %{
+                 errors: %{
+                   email: [
+                     "has invalid format"
+                   ],
+                   password: [
+                     "should be at least 6 character(s)"
+                   ]
+                 }
+               }
+             } == User.cast_and_apply(%User{}, invalid_attrs)
     end
 
     test "authenticate_user/1 with valid credentials returns the user" do
       user = user_fixture(%{email: "amy@the.cat", password: "321secret"})
-      assert {:ok, auth_user} = Accounts.authenticate_user(%User{email: user.email, password: "321secret"})
-      IO.inspect(auth_user, label: "Authenticated User")
-      IO.inspect(user, label: "Original User")
+
+      assert {:ok, auth_user} =
+               Accounts.authenticate_user(%User{email: user.email, password: "321secret"})
+
       assert auth_user.id == user.id
     end
 
     test "authenticate_user/1 returns error for invalid credential" do
       user = user_fixture(%{email: "zoe@the.cat", password: "secret123"})
-      assert {:error, :invalid_credentials} = Accounts.authenticate_user(%User{email: user.email, password: "wrongpassword"})
+
+      assert {:error, :invalid_credentials} =
+               Accounts.authenticate_user(%User{email: user.email, password: "wrongpassword"})
     end
 
     test "authenticate_user/1 returns error if user does not exist" do
-      assert {:error, :invalid_credentials} = Accounts.authenticate_user(%User{email: "random@email", password: "random_password"})
+      assert {:error, :invalid_credentials} =
+               Accounts.authenticate_user(%User{
+                 email: "random@email",
+                 password: "random_password"
+               })
     end
 
     test "change_user/1 returns a user changeset" do

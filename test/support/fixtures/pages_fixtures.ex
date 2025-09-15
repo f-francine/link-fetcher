@@ -18,6 +18,7 @@ defmodule LinkFetcher.PagesFixtures do
         user_id: user.id
       })
       |> LinkFetcher.Pages.insert_page()
+
     page
   end
 end

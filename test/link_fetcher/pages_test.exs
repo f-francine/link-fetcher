@@ -23,9 +23,11 @@ defmodule LinkFetcher.PagesTest do
 
       page_attrs = %{url: "https://elixir-lang.org", title: "Elixir", user_id: user.id}
       {:ok, page} = Pages.insert_page(page_attrs)
+
       links = [
         %{url: "https://hex.pm", title: "Hex"},
-        %{url: "https://phoenixframework.org", title: "Phoenix"}]
+        %{url: "https://phoenixframework.org", title: "Phoenix"}
+      ]
 
       assert :ok = Pages.insert_links(page, links)
 

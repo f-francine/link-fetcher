@@ -8,8 +8,8 @@ defmodule LinkFetcher.Repo.Migrations.CreateUsers do
       add :hashed_password, :string
 
       timestamps(type: :utc_datetime)
-
     end
-      create unique_index(:users, [:email])
+
+    create unique_index(:users, [:email])
   end
 end

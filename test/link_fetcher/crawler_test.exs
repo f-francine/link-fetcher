@@ -3,7 +3,6 @@ defmodule LinkFetcher.CrawlerTest do
 
   alias LinkFetcher.Crawler
 
-
   @tag :external
   test "crawl/1 returns links and title for a real page" do
     url = "https://elixir-lang.org"
