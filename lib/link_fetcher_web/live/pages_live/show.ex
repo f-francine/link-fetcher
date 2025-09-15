@@ -20,21 +20,14 @@ defmodule LinkFetcherWeb.PagesLive.Show do
        |> redirect(to: "/pages")}
     else
       {:ok,
-        socket
-        |> assign(:page_title, "Details")
-        |> assign(:current_user_id, user.id)
-        |> assign(:links, paginated_links)
-        |> assign(:total_pages, total_pages)
-        |> assign(:page_number, page_number)}
+       socket
+       |> assign(:page_title, "Details")
+       |> assign(:current_user_id, user.id)
+       |> assign(:links, paginated_links)
+       |> assign(:total_pages, total_pages)
+       |> assign(:page_number, page_number)}
     end
   end
-
-  # @impl true
-  # def handle_event("show", %{"page_id" => id}, socket) do
-  #   page = Pages.get_page(id)
-
-  #   {:noreply, socket |> assign(links: page)}
-  # end
 
   @impl true
   def handle_event("paginate", %{"page" => page}, socket) do

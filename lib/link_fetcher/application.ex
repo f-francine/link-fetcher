@@ -15,6 +15,7 @@ defmodule LinkFetcher.Application do
       # Start a worker by calling: LinkFetcher.Worker.start_link(arg)
       # {LinkFetcher.Worker, arg},
       # Start to serve requests, typically the last entry
+      {Oban, Application.fetch_env!(:link_fetcher, Oban)},
       LinkFetcherWeb.Endpoint
     ]
 

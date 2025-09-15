@@ -5,10 +5,10 @@ defmodule LinkFetcher.Pages do
 
   import Ecto.Query, warn: false
 
-  def scrape(url) do
-    LinkFetcher.Crawler.crawl(url)
-  end
+  @doc "Fetches a given url and returns all links found on the page"
+  def scrape(url), do: LinkFetcher.Crawler.crawl(url)
 
+  @doc "Lists all pages for a given user, sorted by most recent"
   def list_pages(user_id) do
     Page
     |> where(user_id: ^user_id)
@@ -17,12 +17,28 @@ defmodule LinkFetcher.Pages do
     |> Repo.all()
   end
 
+  @spec insert_page(
+          :invalid
+          | %{optional(:__struct__) => none(), optional(atom() | binary()) => any()}
+        ) :: any()
+  @doc "Inserts a new page with the given attributes"
   def insert_page(attrs) do
     %Page{}
     |> Page.changeset(attrs)
     |> Repo.insert()
   end
 
+  def scrape_and_insert(url, user_id) do
+    with {:ok, %{links: links, title: title}} <- scrape(url),
+         {:ok, page} <- insert_page(%{url: url, title: title, user_id: user_id}) do
+      insert_links(page, links)
+      {:ok, page}
+    else
+      error -> error
+    end
+  end
+
+  @doc "Inserts multiple links associated with a given page"
   def insert_links(page, links_attrs) do
     Enum.each(links_attrs, fn link ->
       %Link{}
@@ -31,6 +47,7 @@ defmodule LinkFetcher.Pages do
     end)
   end
 
+  @doc "Returns paginated links for a given page"
   def paginated_links(page_id, page_number, page_size \\ 5) do
     query =
       from l in Link,
@@ -40,7 +57,7 @@ defmodule LinkFetcher.Pages do
     paginate(query, page_size, page_number)
   end
 
-  @spec paginated_pages(any(), number(), integer()) :: {any(), integer()}
+  @doc "Returns paginated pages for a given user"
   def paginated_pages(user_id, page_number, page_size \\ 10) do
     query =
       from p in Page,

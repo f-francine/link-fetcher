@@ -38,9 +38,18 @@ defmodule LinkFetcher.Accounts.User do
   def cast_and_apply(user \\ %__MODULE__{}, attrs) do
     casted_attrs = changeset(user, attrs)
 
-    case apply_changes(casted_attrs) do
-      %__MODULE__{} = user -> {:ok, user}
-      err -> {:error, err}
+    if casted_attrs.valid? do
+      {:ok, apply_changes(casted_attrs)}
+    else
+      {msg, _validation} =
+        Ecto.Changeset.traverse_errors(casted_attrs, fn {msg, opts} ->
+          Enum.reduce(opts, msg, fn {key, value}, acc ->
+            String.replace(acc, "%{#{key}}", to_string(value))
+          end)
+        end)
+
+      IO.inspect(msg, label: "User changeset errors ----------------------------")
+      {:error, %{errors: msg}}
     end
   end
 end

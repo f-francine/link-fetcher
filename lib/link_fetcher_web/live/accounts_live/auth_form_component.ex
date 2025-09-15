@@ -1,4 +1,10 @@
 defmodule LinkFetcherWeb.AccountsLive.AuthFormComponent do
+  @moduledoc """
+  Component responsible for rendering the signup/signin form and handling its validation.
+
+  The sign in and signup actions are performed via standard HTML form submissions to the AuthController,
+  while the LiveComponent handles real-time validation of the form inputs.
+  """
   use LinkFetcherWeb, :live_component
 
   alias LinkFetcher.Accounts
@@ -9,20 +15,69 @@ defmodule LinkFetcherWeb.AccountsLive.AuthFormComponent do
     <div>
       <.header>
         {@title}
-        <:subtitle>Use this form to manage user records in your database.</:subtitle>
       </.header>
-
+      
+    <!-- LiveView form for validation only -->
+      <.form
+        for={@form}
+        id="user-validate-form"
+        phx-change="validate"
+        phx-target={@myself}
+        autocomplete="off"
+      >
+        <div class="mb-4">
+          <label class="block font-semibold mb-1">Email</label>
+          <input
+            type="email"
+            name="user[email]"
+            value={@form[:email].value}
+            required
+            class="w-full border rounded px-3 py-2"
+          />
+          <div class="text-xs text-gray-500 mt-1">must have the @ symbol</div>
+          <%= if @form[:email].errors != [] do %>
+            <span class="text-red-500 text-xs">
+              {Enum.map(@form[:email].errors, fn {msg, _opts} -> msg end) |> Enum.join(", ")}
+            </span>
+          <% end %>
+        </div>
+        <div class="mb-4">
+          <label class="block font-semibold mb-1">Password</label>
+          <input
+            type="password"
+            name="user[password]"
+            value={@form[:password].value}
+            required
+            class="w-full border rounded px-3 py-2"
+          />
+          <div class="text-xs text-gray-500 mt-1">must have at least 6 characters</div>
+          <%= if @form[:password].errors != [] do %>
+            <span class="text-red-500 text-xs">
+              {Enum.map(@form[:password].errors, fn {msg, _opts} -> msg end) |> Enum.join(", ")}
+            </span>
+          <% end %>
+        </div>
+      </.form>
+      
+    <!-- Regular HTML form for submission -->
       <form
         action={if @action == :signin, do: "/signin", else: "/signup"}
         method="post"
         id="user-form"
+        autocomplete="off"
       >
-        <label>Email</label>
         <input type="hidden" name="_csrf_token" value={get_csrf_token()} />
-        <input type="email" name="email" required />
-        <label>Password</label>
-        <input type="password" name="password" required />
-        <button type="submit">{@title}</button>
+        <input type="hidden" name="email" value={@form[:email].value} />
+        <input type="hidden" name="password" value={@form[:password].value} />
+        <div class="flex p-4 justify-center bg-purple-600 text-white rounded font-bold">
+          <button
+            type="submit"
+            disabled={!@form.source.valid?}
+            class={"#{unless @form.source.valid?, do: "opacity-50 cursor-not-allowed"}"}
+          >
+            {@title}
+          </button>
+        </div>
       </form>
     </div>
     """
@@ -43,44 +98,4 @@ defmodule LinkFetcherWeb.AccountsLive.AuthFormComponent do
     changeset = Accounts.change_user(socket.assigns.user, user_params)
     {:noreply, assign(socket, form: to_form(changeset, action: :validate))}
   end
-
-  # def handle_event("signup", %{"user" => user_params}, socket) do
-  #   register_user(socket, socket.assigns.action, user_params)
-  # end
-
-  #  def handle_event("signin", %{"user" => user_params}, socket) do
-  #   login_user(socket, socket.assigns.action, user_params)
-  # end
-
-  # defp register_user(socket, :signup, user_params) do
-  #   case Accounts.create_user(user_params) do
-  #     {:ok, user} ->
-  #       notify_parent({:signed_up, user})
-
-  #       {:noreply,
-  #        socket
-  #        |> put_flash(:info, "User created successfully")
-  #        |> push_patch(to: socket.assigns.patch)}
-
-  #     {:error, %Ecto.Changeset{} = changeset} ->
-  #       {:noreply, assign(socket, form: to_form(changeset))}
-  #   end
-  # end
-
-  # defp login_user(socket, :signin, user_params) do
-  #   case Accounts.authenticate_user(user_params["email"], user_params["password"]) do
-  #     {:ok, user} ->
-  #       notify_parent({:signed_in, user})
-
-  #       {:noreply,
-  #        socket
-  #        |> push_patch(to: socket.assigns.patch)}
-
-  #     {:error, reason} ->
-  #       changeset = Accounts.change_user(%LinkFetcher.Accounts.User{})
-  #       {:noreply, assign(socket, form: to_form(changeset), error_message: "Invalid email or password")}
-  #   end
-  # end
-
-  # defp notify_parent(msg), do: send(self(), {__MODULE__, msg})
 end
