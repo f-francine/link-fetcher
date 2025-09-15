@@ -20,7 +20,7 @@ defmodule LinkFetcherWeb.AccountsLive.Index do
     {:noreply,
      socket
      |> assign(:current_user, user.id)
-     |> push_navigate(to: ~p"/links")}
+     |> push_navigate(to: ~p"/pages")}
   end
 
   @impl true

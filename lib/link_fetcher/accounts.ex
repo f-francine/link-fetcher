@@ -105,9 +105,6 @@ defmodule LinkFetcher.Accounts do
   def authenticate_user(%User{} = user) do
     user = Repo.get_by(User, email: user.email)
 
-    IO.inspect("user:")
-    IO.inspect(user)
-
     cond do
       user && Bcrypt.verify_pass(user.password, user.hashed_password) ->
         {:ok, user}

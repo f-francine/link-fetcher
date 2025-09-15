@@ -30,13 +30,13 @@ defmodule LinkFetcherWeb.Router do
     post "/signup", AuthController, :signup
   end
 
-  scope "/links", LinkFetcherWeb.LinksLive do
+  scope "/pages", LinkFetcherWeb.PagesLive do
     pipe_through :browser
 
     # Pass user_id from session to LiveView
     live "/", Index, :index
     live "/new", Index, :new
-    live "/:link_id", Index, :show
+    live "/:page_id", Show, :show
   end
 
   # Other scopes may use custom stacks.

@@ -8,7 +8,7 @@ defmodule LinkFetcherWeb.AuthController do
          {:ok, user} <- LinkFetcher.Accounts.authenticate_user(input) do
       conn
       |> put_session(:current_user_id, user.id)
-      |> redirect(to: "/links")
+      |> redirect(to: "/pages")
     else
       {:error, _reason} ->
         conn
@@ -22,7 +22,7 @@ defmodule LinkFetcherWeb.AuthController do
          {:ok, user} <- LinkFetcher.Accounts.register_user(input) do
       conn
       |> put_session(:current_user_id, user.id)
-      |> redirect(to: "/links")
+      |> redirect(to: "/pages")
     else
       {:error, _reason} ->
         conn

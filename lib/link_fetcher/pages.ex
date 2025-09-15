@@ -54,4 +54,9 @@ defmodule LinkFetcher.Pages do
     total_pages = div(total_items, page_size)
     if rem(total_items, page_size) > 0, do: total_pages + 1, else: total_pages
   end
+
+  def get_page(id) do
+    Repo.get(Page, id)
+    |> Repo.preload(:links)
+  end
 end

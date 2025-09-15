@@ -1,0 +1,35 @@
+<.header>
+  {@page.title} page
+  <:subtitle>Fetched page details.</:subtitle>
+  <:actions>
+    <.link patch={~p"/pages/#{@page.id}/delete"} phx-click={JS.push_focus()}>
+      <.button>Delete link</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<h3 class="mt-8 mb-2 text-lg font-semibold">Links found on this page:</h3>
+<table class="min-w-full divide-y divide-gray-200 mb-8">
+  <thead>
+    <tr>
+      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+        Title
+      </th>
+      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+        URL
+      </th>
+    </tr>
+  </thead>
+  <tbody class="bg-white divide-y divide-gray-200">
+    <%= for link <- @page.links do %>
+      <tr>
+        <td class="px-6 py-4 whitespace-nowrap font-semibold"><%= link.title %></td>
+        <td class="px-6 py-4 whitespace-nowrap">
+            <%= "#{@page.url}#{link.url}" %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<.back navigate={~p"/pages"}>Back to pages</.back>
