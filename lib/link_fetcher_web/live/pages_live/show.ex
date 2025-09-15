@@ -2,7 +2,6 @@ defmodule LinkFetcherWeb.PagesLive.Show do
   use LinkFetcherWeb, :live_view
 
   alias LinkFetcher.Pages
-  alias LinkFetcher.Pages.Page
 
   require Logger
 
@@ -10,20 +9,16 @@ defmodule LinkFetcherWeb.PagesLive.Show do
   def mount(params, session, socket) do
     user = LinkFetcher.Accounts.get_user(session["current_user_id"])
 
-    if authenticated?(user) do
-      page = LinkFetcher.Pages.get_page(params["page_id"])
+    page_number = 1
+    {paginated_links, total_pages} = Pages.paginated_links(params["page_id"], page_number)
 
-      {:ok,
-       socket
-       |> assign(:page_title, "Details")
-       |> assign(:current_user_id, user.id)
-       |> assign(:page, page)}
-    else
-      {:ok,
-       socket
-       |> put_flash(:error, "Need to be signed in")
-       |> redirect(to: ~p"/signin")}
-    end
+    {:ok,
+     socket
+     |> assign(:page_title, "Details")
+     |> assign(:current_user_id, user.id)
+     |> assign(:links, paginated_links)
+     |> assign(:total_pages, total_pages)
+     |> assign(:page_number, page_number)}
   end
 
   @impl true
@@ -43,6 +38,4 @@ defmodule LinkFetcherWeb.PagesLive.Show do
       |> assign(:page, page)
     }
   end
-
-  defp authenticated?(user), do: if(user == nil, do: false, else: true)
 end

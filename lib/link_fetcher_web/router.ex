@@ -10,6 +10,10 @@ defmodule LinkFetcherWeb.Router do
     plug :put_secure_browser_headers
   end
 
+  pipeline :authenticated do
+    plug LinkFetcherWeb.Plugs.EnsureAuthenticated
+  end
+
   pipeline :api do
     plug :accepts, ["json"]
   end
@@ -31,7 +35,7 @@ defmodule LinkFetcherWeb.Router do
   end
 
   scope "/pages", LinkFetcherWeb.PagesLive do
-    pipe_through :browser
+    pipe_through [:browser, :authenticated]
 
     # Pass user_id from session to LiveView
     live "/", Index, :index

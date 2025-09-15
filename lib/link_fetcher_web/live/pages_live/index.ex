@@ -10,27 +10,18 @@ defmodule LinkFetcherWeb.PagesLive.Index do
   def mount(_params, session, socket) do
     user = LinkFetcher.Accounts.get_user(session["current_user_id"])
 
-    if authenticated?(user) do
-      page_number = 1
+    page_number = 1
 
-      {pages, total_pages} = LinkFetcher.Pages.paginated_pages(user.id, page_number)
+    {pages, total_pages} = LinkFetcher.Pages.paginated_pages(user.id, page_number)
 
-      {:ok,
-       socket
-       |> assign(:page_title, "Pages")
-       |> assign(:current_user_id, user.id)
-       |> assign(:pages, pages)
-       |> assign(:page_number, page_number)
-       |> assign(:total_pages, total_pages)}
-    else
-      {:ok,
-       socket
-       |> put_flash(:error, "Need to be signed in")
-       |> redirect(to: ~p"/signin")}
-    end
+    {:ok,
+     socket
+     |> assign(:page_title, "Pages")
+     |> assign(:current_user_id, user.id)
+     |> assign(:pages, pages)
+     |> assign(:page_number, page_number)
+     |> assign(:total_pages, total_pages)}
   end
-
-  defp authenticated?(user), do: if(user == nil, do: false, else: true)
 
   @impl true
   def handle_event("new", %{"url" => url}, socket) do
