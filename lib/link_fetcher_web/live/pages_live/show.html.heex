@@ -36,5 +36,7 @@
 
 <!-- Pagination Controls -->
 <div class="flex p-4 justify-center">
-  <.pagination page_id={@page.id} page_number={@page_number} total_pages={@total_pages} />
+  <%= if @page do %>
+    <.pagination page={@page} page_number={@page_number} total_pages={@total_pages} />
+  <% end %>
 </div>
