@@ -2,6 +2,9 @@
 
 Simple scraper that searches for all href links in a given domain.
 
+<img width="760" height="259" alt="image" src="https://github.com/user-attachments/assets/b54e88e3-e5c8-4ff5-85e6-8c4a6f761ad8" />
+
+
 ### Technologies
 This project was developed using Elixr/Phoenix Liveview and Floki + Crawly as tools to help scrape the pages.
 
