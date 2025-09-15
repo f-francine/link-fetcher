@@ -10,17 +10,23 @@ defmodule LinkFetcherWeb.PagesLive.Show do
   @impl true
   def mount(params, session, socket) do
     user = LinkFetcher.Accounts.get_user(session["current_user_id"])
-
     page_number = 1
     {paginated_links, total_pages} = Pages.paginated_links(params["page_id"], page_number)
 
-    {:ok,
-     socket
-     |> assign(:page_title, "Details")
-     |> assign(:current_user_id, user.id)
-     |> assign(:links, paginated_links)
-     |> assign(:total_pages, total_pages)
-     |> assign(:page_number, page_number)}
+    if paginated_links == [] do
+      {:ok,
+       socket
+       |> put_flash(:error, "Page not found.")
+       |> redirect(to: "/pages")}
+    else
+      {:ok,
+        socket
+        |> assign(:page_title, "Details")
+        |> assign(:current_user_id, user.id)
+        |> assign(:links, paginated_links)
+        |> assign(:total_pages, total_pages)
+        |> assign(:page_number, page_number)}
+    end
   end
 
   # @impl true
