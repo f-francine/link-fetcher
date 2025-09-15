@@ -52,14 +52,6 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
-# Configures Crawly
-config :crawly,
-  # Stop after 10 seconds
-  closespider_timeout: 10,
-  concurrent_requests_per_domain: 10,
-  # Stop after collecting 100 items
-  closespider_itemcount: 100
-
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"
