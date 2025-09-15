@@ -9,6 +9,7 @@ defmodule LinkFetcherWeb.Plugs.EnsureAuthenticated do
       conn
     else
       conn
+      |> fetch_flash()
       |> put_flash(:error, "You must be logged in to access that page.")
       |> redirect(to: "/signin")
       |> halt()

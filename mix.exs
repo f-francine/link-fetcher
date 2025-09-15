@@ -59,7 +59,8 @@ defmodule LinkFetcher.MixProject do
       {:bcrypt_elixir, "~> 1.0"},
       {:crawly, "~> 0.16.0"},
       {:httpoison, "~> 1.7"},
-      {:oban, "~> 2.17"}
+      {:oban, "~> 2.17"},
+      {:lazy_html, ">= 0.1.0", only: :test}
     ]
   end
 

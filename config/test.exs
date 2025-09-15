@@ -20,6 +20,7 @@ config :link_fetcher, LinkFetcherWeb.Endpoint,
   secret_key_base: "5MDoj06dAl2ul8sVCmokUWJM2RmFs3/iRhFvvEI39ufADV6cbRUoJouOzGY4tj/T",
   server: false
 
+
 # Print only warnings and errors during test
 config :logger, level: :warning
 

@@ -21,17 +21,16 @@ defmodule LinkFetcher.Accounts do
   session data.
   """
   def authenticate_user(%User{} = user) do
-    user = Repo.get_by(User, email: user.email)
+    db_user = Repo.get_by(User, email: user.email)
 
     cond do
-      user && Bcrypt.verify_pass(user.password, user.hashed_password) ->
-        {:ok, user}
-
-      user ->
-        {:error, :invalid_password}
+      db_user && Bcrypt.verify_pass(user.password, db_user.hashed_password) ->
+        {:ok, db_user}
 
       true ->
-        {:error, :user_not_found}
+        #  returns invalid_credentials even if the user does not exist
+        #  to avoid user enumeration attacks
+        {:error, :invalid_credentials}
     end
   end
 
@@ -42,8 +41,8 @@ defmodule LinkFetcher.Accounts do
   the controller level to validate credentials and insert
   session data.
   """
-  def register_user(%User{} = user) do
-    case Repo.insert(user) do
+  def register_user(attrs) do
+    case User.insert(attrs) do
       {:ok, user} -> {:ok, user}
       {:error, changeset} -> {:error, changeset}
     end
