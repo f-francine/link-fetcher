@@ -11,13 +11,17 @@ defmodule LinkFetcherWeb.LinksLive.Index do
     user = LinkFetcher.Accounts.get_user(session["current_user_id"])
 
     if authenticated?(user) do
-      pages = Pages.list_pages(user.id)
+      page_number = 1
+
+      {pages, total_pages} = LinkFetcher.Pages.paginated_pages(user.id, page_number)
 
       {:ok,
        socket
        |> assign(:page_title, "Links")
        |> assign(:current_user_id, user.id)
-       |> assign(:pages, pages)}
+       |> assign(:pages, pages)
+       |> assign(:page_number, page_number)
+       |> assign(:total_pages, total_pages)}
     else
       {:ok,
        socket
@@ -32,12 +36,14 @@ defmodule LinkFetcherWeb.LinksLive.Index do
   def handle_event("new", %{"url" => url}, socket) do
     case crawl(url, socket.assigns.current_user_id) do
       :ok ->
+         {pages, total_pages} = Pages.paginated_pages(socket.assigns.current_user_id, socket.assigns.page_number)
+
         {:noreply,
          socket
-         |> assign(:pages, Pages.list_pages(socket.assigns.current_user_id))}
+         |> assign(:pages, pages)
+         |> assign(:total_pages, total_pages)}
 
       {:error, :fetch_page_failed} ->
-
         {:noreply,
          socket
          |> put_flash(:error, "failed to fetch web site")}
@@ -47,6 +53,16 @@ defmodule LinkFetcherWeb.LinksLive.Index do
          socket
          |> put_flash(:error, "unexpected error when crawling the website")}
     end
+  end
+
+  @impl true
+  def handle_event("paginate", %{"page" => page}, socket) do
+    page_number = String.to_integer(page)
+
+    {pages, total_pages} =
+      Pages.paginated_pages(socket.assigns.current_user_id, page_number)
+
+    {:noreply, assign(socket, pages: pages, page_number: page_number, total_pages: total_pages)}
   end
 
   defp crawl(url, user_id) do
@@ -73,12 +89,16 @@ defmodule LinkFetcherWeb.LinksLive.Index do
 
   @impl true
   def handle_params(_params, _url, socket) do
+    {pages, total_pages} = LinkFetcher.Pages.paginated_pages(socket.assigns.current_user_id, socket.assigns.page_number)
+
     case socket.assigns.live_action do
       :index ->
         {:noreply,
          socket
          |> assign(:page_title, "Links")
-         |> assign(:pages, LinkFetcher.Pages.list_pages(socket.assigns.current_user_id))}
+         |> assign(:pages, pages)
+         |> assign(:total_pages, total_pages)
+        }
 
       :new ->
         {:noreply,

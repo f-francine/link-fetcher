@@ -9,6 +9,7 @@ defmodule LinkFetcher.Crawler do
       {:fetch, %{status_code: status}} ->
         Logger.error("Failed to fetch page. Status #{status} was returned")
         {:error, :fetch_page_failed}
+
       e ->
         Logger.error("Unexpected error when crawling the website", error: e)
         e
