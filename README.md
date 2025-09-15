@@ -1,18 +1,29 @@
 # LinkFetcher
 
-To start your Phoenix server:
+Simple scraper that searches for all href links in a given domain.
 
-  * Run `mix setup` to install and setup dependencies
-  * Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
+### Technologies
+This project was developed using Elixr/Phoenix Liveview and Floki + Crawly as tools to help scrape the pages.
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+### Setup
 
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
+> ⚠️ You must have [elixir](https://github.com/asdf-vm/asdf-elixir), [erlang](https://github.com/asdf-vm/asdf-erlang) and [docker compose](https://docs.docker.com/compose/gettingstarted/) installed in order to run this application.
 
-## Learn more
+1. Runing the db
+`docker compose up -d`
 
-  * Official website: https://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Forum: https://elixirforum.com/c/phoenix-forum
-  * Source: https://github.com/phoenixframework/phoenix
+2. Fetching dependencies
+`mix deps.get`
+
+3. Running migrations and setting up DB
+`mix ecto.setup`
+
+4. Running tests
+`mix test`
+
+5. Running the server
+`mix phx.server`
+
+**Congratulations! Now you can access the page at http://localhost:4000**
+
+If it is your first time, you'll have to create an account. If it is not, simple click signin and start scraping!
