@@ -23,7 +23,7 @@
     on_cancel={JS.patch(~p"/")}
   >
     <.live_component
-      module={LinkFetcherWeb.AccountsLive.FormComponent}
+      module={LinkFetcherWeb.AccountsLive.AuthFormComponent}
       id={@user.id || :new}
       title={@page_title}
       action={@live_action}

@@ -17,10 +17,26 @@ defmodule LinkFetcherWeb.Router do
   scope "/", LinkFetcherWeb.AccountsLive do
     pipe_through :browser
 
-    live "/",  Index, :home
+    live "/", Index, :home
 
     live "/signin", Index, :signin
     live "/signup", Index, :signup
+  end
+
+  scope "/", LinkFetcherWeb do
+    pipe_through :browser
+
+    post "/signin", AuthController, :signin
+    post "/signup", AuthController, :signup
+  end
+
+  scope "/links", LinkFetcherWeb.LinksLive do
+    pipe_through :browser
+
+    # Pass user_id from session to LiveView
+    live "/", Index, :index
+    live "/new", Index, :new
+    live "/:link_id", Index, :show
   end
 
   # Other scopes may use custom stacks.

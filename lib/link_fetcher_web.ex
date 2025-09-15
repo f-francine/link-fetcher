@@ -62,6 +62,10 @@ defmodule LinkFetcherWeb do
   def live_component do
     quote do
       use Phoenix.LiveComponent
+      import Phoenix.Component
+
+      import Phoenix.Controller,
+        only: [get_csrf_token: 0]
 
       unquote(html_helpers())
     end
