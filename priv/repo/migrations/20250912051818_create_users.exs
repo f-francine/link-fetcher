@@ -5,12 +5,11 @@ defmodule LinkFetcher.Repo.Migrations.CreateUsers do
     create table(:users, primary_key: false) do
       add :id, :binary_id, primary_key: true
       add :email, :string
-      add :password, :string
       add :hashed_password, :string
 
       timestamps(type: :utc_datetime)
-
-      unique_index(:users, [:email])
     end
+
+    create unique_index(:users, [:email])
   end
 end

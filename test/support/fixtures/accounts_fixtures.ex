@@ -8,14 +8,14 @@ defmodule LinkFetcher.AccountsFixtures do
   Generate a user.
   """
   def user_fixture(attrs \\ %{}) do
-    {:ok, user} =
+    user_attrs =
       attrs
       |> Enum.into(%{
-        email: "some email",
-        password: "some password"
+        email: "zoe@the.cat",
+        password: "somepassword"
       })
-      |> LinkFetcher.Accounts.create_user()
 
+    {:ok, user} = LinkFetcher.Accounts.register_user(user_attrs)
     user
   end
 end

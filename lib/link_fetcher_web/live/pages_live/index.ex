@@ -2,7 +2,7 @@ defmodule LinkFetcherWeb.PagesLive.Index do
   use LinkFetcherWeb, :live_view
 
   alias LinkFetcher.Pages
-  alias LinkFetcher.Pages.Page
+  alias LinkFetcher.Jobs.ScrapeJob
 
   import LinkFetcherWeb.Pagination
 
@@ -16,36 +16,52 @@ defmodule LinkFetcherWeb.PagesLive.Index do
 
     {pages, total_pages} = LinkFetcher.Pages.paginated_pages(user.id, page_number)
 
+    if connected?(socket), do: Phoenix.PubSub.subscribe(LinkFetcher.PubSub, "pages:#{user.id}")
+
     {:ok,
      socket
      |> assign(:page_title, "Pages")
      |> assign(:current_user_id, user.id)
      |> assign(:pages, pages)
      |> assign(:page_number, page_number)
-     |> assign(:total_pages, total_pages)}
+     |> assign(:total_pages, total_pages)
+     |> assign(:status, nil)}
+  end
+
+  @impl true
+  def handle_info({:page_scraped, _}, socket) do
+    {pages, total_pages} =
+      Pages.paginated_pages(socket.assigns.current_user_id, socket.assigns.page_number)
+
+    {:noreply,
+     socket
+     |> assign(:pages, pages)
+     |> assign(:total_pages, total_pages)
+     |> put_flash(:info, "page added successfully!")}
+  end
+
+  @impl true
+  def handle_info({:scrape_failed, {_reason, err_status}}, socket) do
+    {:noreply,
+     socket
+     |> put_flash(:error, "Failed to scrape page: status #{inspect(err_status)}")
+     |> push_patch(to: ~p"/pages")}
   end
 
   @impl true
   def handle_event("new", %{"url" => url}, socket) do
-    case crawl(url, socket.assigns.current_user_id) do
-      :ok ->
-        {pages, total_pages} =
-          Pages.paginated_pages(socket.assigns.current_user_id, socket.assigns.page_number)
+    user_id = socket.assigns.current_user_id
 
+    # Enqueue the background job
+    case Oban.insert(ScrapeJob.new(%{url: url, user_id: user_id}), max_attempts: 1) do
+      {:ok, _job} ->
         {:noreply,
          socket
-         |> assign(:pages, pages)
-         |> assign(:total_pages, total_pages)}
+         |> put_flash(:info, "Scrape job started! You will see results when it's done.")
+         |> push_patch(to: ~p"/pages")}
 
-      {:error, :fetch_page_failed} ->
-        {:noreply,
-         socket
-         |> put_flash(:error, "failed to fetch web site")}
-
-      _error ->
-        {:noreply,
-         socket
-         |> put_flash(:error, "unexpected error when crawling the website")}
+      {:error, reason} ->
+        {:noreply, put_flash(socket, :error, "Failed to start scrape job: #{inspect(reason)}")}
     end
   end
 
@@ -57,28 +73,6 @@ defmodule LinkFetcherWeb.PagesLive.Index do
       Pages.paginated_pages(socket.assigns.current_user_id, page_number)
 
     {:noreply, assign(socket, pages: pages, page_number: page_number, total_pages: total_pages)}
-  end
-
-  defp crawl(url, user_id) do
-    case LinkFetcher.Crawler.crawl(url) do
-      {:ok, %{links: links, title: title}} ->
-        insert_result(user_id, links, url, title)
-
-      error ->
-        error
-    end
-  end
-
-  defp insert_result(user_id, results, domain_url, domain_title) do
-    with {:ok, %Page{} = page} <-
-           LinkFetcher.Pages.insert_page(%{url: domain_url, title: domain_title, user_id: user_id}),
-         :ok <- LinkFetcher.Pages.insert_links(page, results) do
-      :ok
-    else
-      e ->
-        Logger.error("Error when inserting page attrs", error: e)
-        e
-    end
   end
 
   @impl true
@@ -101,7 +95,9 @@ defmodule LinkFetcherWeb.PagesLive.Index do
         {:noreply,
          socket
          |> assign(:page_title, "New Link")
-         |> assign(:pages, %LinkFetcher.Pages.Page{})}
+         |> assign(:pages, %LinkFetcher.Pages.Page{})
+         |> assign(:status, "processing")
+         |> put_flash(:info, "Processing the page...")}
     end
   end
 end

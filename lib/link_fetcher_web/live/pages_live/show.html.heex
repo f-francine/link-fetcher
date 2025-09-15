@@ -1,11 +1,6 @@
 <.header>
   {@page.title} page
   <:subtitle>Fetched page details.</:subtitle>
-  <:actions>
-    <.link patch={~p"/pages/#{@page.id}/delete"} phx-click={JS.push_focus()}>
-      <.button>Delete link</.button>
-    </.link>
-  </:actions>
 </.header>
 
 <h3 class="mt-8 mb-2 text-lg font-semibold">Links found on this page:</h3>

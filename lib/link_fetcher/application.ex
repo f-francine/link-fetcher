@@ -12,6 +12,7 @@ defmodule LinkFetcher.Application do
       LinkFetcher.Repo,
       {DNSCluster, query: Application.get_env(:link_fetcher, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: LinkFetcher.PubSub},
+      {Oban, Application.fetch_env!(:link_fetcher, Oban)},
       # Start a worker by calling: LinkFetcher.Worker.start_link(arg)
       # {LinkFetcher.Worker, arg},
       # Start to serve requests, typically the last entry

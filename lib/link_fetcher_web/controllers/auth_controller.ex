@@ -18,12 +18,12 @@ defmodule LinkFetcherWeb.AuthController do
   end
 
   def signup(conn, params) do
-    with {:ok, input} <- User.cast_and_apply(params),
-         {:ok, user} <- LinkFetcher.Accounts.register_user(input) do
-      conn
-      |> put_session(:current_user_id, user.id)
-      |> redirect(to: "/pages")
-    else
+    case LinkFetcher.Accounts.register_user(params) do
+      {:ok, user} ->
+        conn
+        |> put_session(:current_user_id, user.id)
+        |> redirect(to: "/pages")
+
       {:error, _reason} ->
         conn
         |> put_flash(:error, "Failed to register")

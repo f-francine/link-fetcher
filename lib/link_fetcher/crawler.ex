@@ -1,6 +1,10 @@
 defmodule LinkFetcher.Crawler do
   require Logger
 
+  @doc """
+  Fetches a given url and returns all links found on
+  the page along with the page title
+  """
   def crawl(url) do
     with {:fetch, %{status_code: 200, body: body}} <- {:fetch, Crawly.fetch(url)},
          {:ok, document} <- Floki.parse_document(body) do
@@ -8,7 +12,7 @@ defmodule LinkFetcher.Crawler do
     else
       {:fetch, %{status_code: status}} ->
         Logger.error("Failed to fetch page. Status #{status} was returned")
-        {:error, :fetch_page_failed}
+        {:error, {:fetch_page_failed, status}}
 
       e ->
         Logger.error("Unexpected error when crawling the website", error: e)
