@@ -17,49 +17,44 @@
       </button>
     </form>
 
-    <!-- Pages table -->
+    <!-- Pages table as clickable cards -->
     <div>
-      <table class="min-w-full divide-y divide-gray-200">
-        <thead>
-          <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Page
-            </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Links
-            </th>
-          </tr>
-        </thead>
-        <tbody class="bg-white divide-y divide-gray-200">
-          <%= for page <- @pages do %>
-            <tr>
-              <td class="px-6 py-4 whitespace-nowrap"><%= page.title %></td>
-              <td class="px-6 py-4 whitespace-nowrap"><%= Enum.count(page.links) %></td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
+      <div class="grid grid-cols-1 gap-2">
+        <%= for page <- @pages do %>
+          <.link patch={"/pages/#{page.id}"}>
+            <div class="cursor-pointer bg-gray-100 hover:bg-indigo-100 rounded shadow px-4 py-2 flex justify-between items-center transition">
+              <div>
+                <div class="font-semibold"><%= page.title %></div>
+                <div class="text-sm text-gray-500">Links: <%= Enum.count(page.links) %></div>
+              </div>
+              <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </.link>
+        <% end %>
+      </div>
     </div>
 
     <!-- Pagination Controls -->
-    <div class="flex p-8 justify-center">
+    <div class="flex p-4 justify-center">
       <%= if @page_number > 1 do %>
         <button
           phx-click="paginate"
           phx-value-page={@page_number - 1}
-          class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
+          class="px-3 bg-gray-200 rounded hover:bg-gray-300"
         >
           Previous
         </button>
       <% end %>
       <span class="px-3 py-1 text-gray-700 font-semibold">
-        Page <%= @page_number %> of <%= if @total_pages == 0, do: "1", else: @total_pages %>
+        Page <%= @page_number %> of <%= @total_pages %>
       </span>
       <%= if @total_pages > 1 and @page_number < @total_pages do %>
         <button
           phx-click="paginate"
           phx-value-page={@page_number + 1}
-          class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
+          class="px-3 bg-gray-200 rounded hover:bg-gray-300"
         >
           Next
         </button>

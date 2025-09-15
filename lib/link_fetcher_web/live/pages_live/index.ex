@@ -1,4 +1,4 @@
-defmodule LinkFetcherWeb.LinksLive.Index do
+defmodule LinkFetcherWeb.PagesLive.Index do
   use LinkFetcherWeb, :live_view
 
   alias LinkFetcher.Pages
@@ -17,7 +17,7 @@ defmodule LinkFetcherWeb.LinksLive.Index do
 
       {:ok,
        socket
-       |> assign(:page_title, "Links")
+       |> assign(:page_title, "Pages")
        |> assign(:current_user_id, user.id)
        |> assign(:pages, pages)
        |> assign(:page_number, page_number)
@@ -105,6 +105,7 @@ defmodule LinkFetcherWeb.LinksLive.Index do
          socket
          |> assign(:page_title, "New Link")
          |> assign(:pages, %LinkFetcher.Pages.Page{})}
+
     end
   end
 end
