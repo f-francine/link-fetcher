@@ -4,6 +4,8 @@ defmodule LinkFetcherWeb.PagesLive.Index do
   alias LinkFetcher.Pages
   alias LinkFetcher.Pages.Page
 
+  import LinkFetcherWeb.Pagination
+
   require Logger
 
   @impl true
@@ -27,7 +29,8 @@ defmodule LinkFetcherWeb.PagesLive.Index do
   def handle_event("new", %{"url" => url}, socket) do
     case crawl(url, socket.assigns.current_user_id) do
       :ok ->
-         {pages, total_pages} = Pages.paginated_pages(socket.assigns.current_user_id, socket.assigns.page_number)
+        {pages, total_pages} =
+          Pages.paginated_pages(socket.assigns.current_user_id, socket.assigns.page_number)
 
         {:noreply,
          socket
@@ -80,7 +83,11 @@ defmodule LinkFetcherWeb.PagesLive.Index do
 
   @impl true
   def handle_params(_params, _url, socket) do
-    {pages, total_pages} = LinkFetcher.Pages.paginated_pages(socket.assigns.current_user_id, socket.assigns.page_number)
+    {pages, total_pages} =
+      LinkFetcher.Pages.paginated_pages(
+        socket.assigns.current_user_id,
+        socket.assigns.page_number
+      )
 
     case socket.assigns.live_action do
       :index ->
@@ -88,15 +95,13 @@ defmodule LinkFetcherWeb.PagesLive.Index do
          socket
          |> assign(:page_title, "Links")
          |> assign(:pages, pages)
-         |> assign(:total_pages, total_pages)
-        }
+         |> assign(:total_pages, total_pages)}
 
       :new ->
         {:noreply,
          socket
          |> assign(:page_title, "New Link")
          |> assign(:pages, %LinkFetcher.Pages.Page{})}
-
     end
   end
 end

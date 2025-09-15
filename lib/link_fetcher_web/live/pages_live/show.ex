@@ -3,6 +3,8 @@ defmodule LinkFetcherWeb.PagesLive.Show do
 
   alias LinkFetcher.Pages
 
+  import LinkFetcherWeb.Pagination
+
   require Logger
 
   @impl true
@@ -21,11 +23,23 @@ defmodule LinkFetcherWeb.PagesLive.Show do
      |> assign(:page_number, page_number)}
   end
 
-  @impl true
-  def handle_event("show", %{"page_id" => id}, socket) do
-    page = Pages.get_page(id)
+  # @impl true
+  # def handle_event("show", %{"page_id" => id}, socket) do
+  #   page = Pages.get_page(id)
 
-    {:noreply, socket |> assign(page: page)}
+  #   {:noreply, socket |> assign(links: page)}
+  # end
+
+  @impl true
+  def handle_event("paginate", %{"page" => page}, socket) do
+    page_number = String.to_integer(page)
+    {paginated_links, total_pages} = Pages.paginated_links(socket.assigns.page.id, page_number)
+
+    {:noreply,
+     socket
+     |> assign(links: paginated_links)
+     |> assign(:total_pages, total_pages)
+     |> assign(:page_number, page_number)}
   end
 
   @impl true
@@ -33,9 +47,8 @@ defmodule LinkFetcherWeb.PagesLive.Show do
     page = Pages.get_page(params["page_id"])
 
     {:noreply,
-      socket
-      |> assign(:page_title, "Details")
-      |> assign(:page, page)
-    }
+     socket
+     |> assign(:page_title, "Details")
+     |> assign(:page, page)}
   end
 end

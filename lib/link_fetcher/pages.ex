@@ -31,6 +31,15 @@ defmodule LinkFetcher.Pages do
     end)
   end
 
+  def paginated_links(page_id, page_number, page_size \\ 5) do
+    query =
+      from l in Link,
+        where: l.page_id == ^page_id,
+        order_by: [desc: l.inserted_at]
+
+    paginate(query, page_size, page_number)
+  end
+
   @spec paginated_pages(any(), number(), integer()) :: {any(), integer()}
   def paginated_pages(user_id, page_number, page_size \\ 10) do
     query =
@@ -39,6 +48,10 @@ defmodule LinkFetcher.Pages do
         preload: [:links],
         order_by: [desc: p.inserted_at]
 
+    paginate(query, page_size, page_number)
+  end
+
+  defp paginate(query, page_size, page_number) do
     total_items = Repo.aggregate(query, :count, :id)
 
     pages =
