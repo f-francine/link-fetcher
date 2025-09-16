@@ -43,11 +43,16 @@ defmodule LinkFetcherWeb.PagesLive.Show do
 
   @impl true
   def handle_params(params, _url, socket) do
-    page = Pages.get_page(params["page_id"])
-
-    {:noreply,
-     socket
-     |> assign(:page_title, "Details")
-     |> assign(:page, page)}
+    if page = Pages.get_by_user_page(socket.assigns.current_user_id, params["page_id"]) do
+      {:noreply,
+       socket
+       |> assign(:page_title, "Details")
+       |> assign(:page, page)}
+    else
+      {:noreply,
+       socket
+       |> put_flash(:error, "Page not found.")
+       |> redirect(to: "/pages")}
+    end
   end
 end

@@ -42,7 +42,10 @@ defmodule LinkFetcher.Accounts do
   session data.
   """
   def register_user(attrs) do
-    case User.insert(attrs) do
+    %User{}
+    |> User.changeset(attrs)
+    |> Repo.insert()
+    |> case do
       {:ok, user} -> {:ok, user}
       {:error, changeset} -> {:error, changeset}
     end

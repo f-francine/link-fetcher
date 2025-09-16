@@ -66,7 +66,7 @@ config :link_fetcher, LinkFetcherWeb.Endpoint,
 config :link_fetcher, dev_routes: true
 
 # Do not include metadata nor timestamps in development logs
-config :logger, :console, format: "[$level] $message\n"
+config :logger, :console, level: :error
 
 # Set a higher stacktrace during development. Avoid configuring such
 # in production as building large stacktraces may be expensive.
