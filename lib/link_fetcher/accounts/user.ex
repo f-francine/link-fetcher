@@ -2,8 +2,6 @@ defmodule LinkFetcher.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias LinkFetcher.Repo
-
   @required_fields ~w(email password)a
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -35,12 +33,6 @@ defmodule LinkFetcher.Accounts.User do
       nil -> add_error(changeset, :hashed_password, "failed to validate password")
       password -> put_change(changeset, :hashed_password, Bcrypt.hash_pwd_salt(password))
     end
-  end
-
-  def insert(attrs) do
-    %__MODULE__{}
-    |> changeset(attrs)
-    |> Repo.insert()
   end
 
   def cast_and_apply(user \\ %__MODULE__{}, attrs) do

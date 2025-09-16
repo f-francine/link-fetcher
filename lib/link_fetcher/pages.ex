@@ -17,10 +17,6 @@ defmodule LinkFetcher.Pages do
     |> Repo.all()
   end
 
-  @spec insert_page(
-          :invalid
-          | %{optional(:__struct__) => none(), optional(atom() | binary()) => any()}
-        ) :: any()
   @doc "Inserts a new page with the given attributes"
   def insert_page(attrs) do
     %Page{}
@@ -28,6 +24,17 @@ defmodule LinkFetcher.Pages do
     |> Repo.insert()
   end
 
+  @doc "Gets a page by its ID and user ID"
+  def get_by_user_page(user_id, page_id) do
+    Page
+    |> Repo.get_by(id: page_id, user_id: user_id)
+    |> case do
+      nil -> nil
+      page -> Repo.preload(page, [:links])
+    end
+  end
+
+  @doc "Scrapes a URL and inserts the page and its links into the database."
   def scrape_and_insert(url, user_id) do
     with {:ok, %{links: links, title: title}} <- scrape(url),
          {:ok, page} <- insert_page(%{url: url, title: title, user_id: user_id}) do
@@ -83,10 +90,5 @@ defmodule LinkFetcher.Pages do
   defp calculate_total_pages(total_items, page_size) do
     total_pages = div(total_items, page_size)
     if rem(total_items, page_size) > 0, do: total_pages + 1, else: total_pages
-  end
-
-  def get_page(id) do
-    Repo.get(Page, id)
-    |> Repo.preload(:links)
   end
 end

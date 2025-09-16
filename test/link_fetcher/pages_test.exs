@@ -13,7 +13,7 @@ defmodule LinkFetcher.PagesTest do
 
       assert {:ok, %Page{} = page} = Pages.insert_page(attrs)
       assert page.url == "https://elixir-lang.org"
-      assert Pages.get_page(page.id).id == page.id
+      assert Pages.get_by_user_page(user.id, page.id).id == page.id
     end
   end
 
@@ -31,7 +31,7 @@ defmodule LinkFetcher.PagesTest do
 
       assert :ok = Pages.insert_links(page, links)
 
-      page = Pages.get_page(page.id)
+      page = Pages.get_by_user_page(user.id, page.id)
 
       assert Enum.any?(page.links, &(&1.url == "https://hex.pm"))
       assert Enum.any?(page.links, &(&1.url == "https://phoenixframework.org"))
